@@ -600,43 +600,95 @@
     // ==================== 8. WHATSAPP SUBMIT HANDLERS ====================
     // Each form builds a message string, then calls openWhatsApp(message)
 
-    function submitTableBooking(e) {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        const msg = `As-salamu Alaikum Aida Cafe! 🕌%0A%0A*TABLE BOOKING REQUEST*%0A%0A` +
-        `Name: ${data.get("name")}%0APhone: ${data.get("phone")}%0ADate: ${data.get("date")}%0ATime: ${data.get("time")}%0AGuests: ${data.get("guests")}%0AOccasion: ${data.get("occasion")}%0ARequest: ${data.get("request") || "None"}%0A%0ALocation: Mbarara Bus Park%0APlease confirm my table.`;
-        openWhatsApp(decodeURIComponent(msg)); // decode then re-encode inside function
-        closeModal("table-modal");
-    }
+    ==================== 8. WHATSAPP SUBMIT HANDLERS ====================
+// Each form builds a message string, then calls openWhatsApp(message)
 
-    function submitDelivery(e) {
-        e.preventDefault();
-        if (cart.length === 0) { alert("Cart is empty"); return; }
-        const data = new FormData(e.target);
-        let itemsText = cart.map(i => `• ${i.qty}x ${i.name} - ${formatMoney(i.price * i.qty)}`).join("%0A");
-        const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
-        const total = subtotal + DELIVERY_FEE;
-        const msg = `As-salamu Alaikum Aida Cafe! 🛵%0A%0A*NEW DELIVERY ORDER*%0A%0A${itemsText}%0A%0ASubtotal: ${formatMoney(subtotal)}%0ADelivery: ${formatMoney(DELIVERY_FEE)}%0A*Total: ${formatMoney(total)}*%0A%0AName: ${data.get("name")}%0APhone: ${data.get("phone")}%0AAddress: ${data.get("address")}%0ANotes: ${data.get("instructions") || "None"}%0A%0APlease confirm my order.`;
-        openWhatsApp(msg);
-        closeModal("delivery-modal");
-    }
+function submitTableBooking(e) {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    
+    // Use clean javascript newlines (\n) instead of hardcoded url codes
+    const msg = `As-salamu Alaikum Aida Cafe! 🕌\n\n` +
+    `*TABLE BOOKING REQUEST*\n\n` +
+    `Name: ${data.get("name")}\n` +
+    `Phone: ${data.get("phone")}\n` +
+    `Date: ${data.get("date")}\n` +
+    `Time: ${data.get("time")}\n` +
+    `Guests: ${data.get("guests")}\n` +
+    `Occasion: ${data.get("occasion")}\n` +
+    `Request: ${data.get("request") || "None"}\n\n` +
+    `Location: Mbarara Bus Park\n` +
+    `Please confirm my table.`;
+    
+    openWhatsApp(msg); 
+    closeModal("table-modal");
+}
 
-    function submitEventBooking(e) {
-        e.preventDefault();
-        const d = new FormData(e.target);
-        const msg = `As-salamu Alaikum Aida Cafe! 🎉%0A%0A*EVENT HOSTING INQUIRY - At Your Venue*%0A%0AName: ${d.get("name")}%0APhone: ${d.get("phone")}%0AEvent Type: ${d.get("type")}%0AGuests: ${d.get("guests")}%0ADate: ${d.get("date")}%0ABudget: ${d.get("budget") || "Not specified"}%0ADetails: ${d.get("details") || "None"}%0A%0APlease check availability.`;
-        openWhatsApp(msg);
-        closeModal("event-modal");
-    }
+function submitDelivery(e) {
+    e.preventDefault();
+    if (cart.length === 0) { alert("Cart is empty"); return; }
+    const data = new FormData(e.target);
+    
+    // Joined with \n instead of %0A
+    let itemsText = cart.map(i => `• ${i.qty}x ${i.name} - ${formatMoney(i.price * i.qty)}`).join("\n");
+    const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const total = subtotal + DELIVERY_FEE;
+    
+    const msg = `As-salamu Alaikum Aida Cafe! 🛵\n\n` +
+    `*NEW DELIVERY ORDER*\n\n` +
+    `${itemsText}\n\n` +
+    `Subtotal: ${formatMoney(subtotal)}\n` +
+    `Delivery: ${formatMoney(DELIVERY_FEE)}\n` +
+    `*Total: ${formatMoney(total)}*\n\n` +
+    `Name: ${data.get("name")}\n` +
+    `Phone: ${data.get("phone")}\n` +
+    `Address: ${data.get("address")}\n` +
+    `Notes: ${data.get("instructions") || "None"}\n\n` +
+    `Please confirm my order.`;
+    
+    openWhatsApp(msg);
+    closeModal("delivery-modal");
+}
 
-    function submitCatering(e) {
-        e.preventDefault();
-        const d = new FormData(e.target);
-        const menus = [...document.querySelectorAll('input[name="menu"]:checked')].map(cb=>cb.value).join(", ") || "Not specified";
-        const msg = `As-salamu Alaikum Aida Cafe! 🍲%0A%0A*OUTSIDE CATERING REQUEST*%0A%0AName: ${d.get("name")}%0APhone: ${d.get("phone")}%0AEvent: ${d.get("eventType")}%0ALocation: ${d.get("location")}%0AGuests: ${d.get("guests")}%0ADate: ${d.get("date")}%0AMenu Wanted: ${menus}%0AExtras: ${d.get("extra") || "None"}%0A%0APlease send me a quote.`;
-        openWhatsApp(msg);
-        closeModal("catering-modal");
-    }
+function submitEventBooking(e) {
+    e.preventDefault();
+    const d = new FormData(e.target);
+    
+    const msg = `As-salamu Alaikum Aida Cafe! 🎉\n\n` +
+    `*EVENT HOSTING INQUIRY - At Your Venue*\n\n` +
+    `Name: ${d.get("name")}\n` +
+    `Phone: ${d.get("phone")}\n` +
+    `Event Type: ${d.get("type")}\n` +
+    `Guests: ${d.get("guests")}\n` +
+    `Date: ${d.get("date")}\n` +
+    `Budget: ${d.get("budget") || "Not specified"}\n` +
+    `Details: ${d.get("details") || "None"}\n\n` +
+    `Please check availability.`;
+    
+    openWhatsApp(msg);
+    closeModal("event-modal");
+}
+
+function submitCatering(e) {
+    e.preventDefault();
+    const d = new FormData(e.target);
+    const menus = [...document.querySelectorAll('input[name="menu"]:checked')].map(cb=>cb.value).join(", ") || "Not specified";
+    
+    const msg = `As-salamu Alaikum Aida Cafe! 🍲\n\n` +
+    `*OUTSIDE CATERING REQUEST*\n\n` +
+    `Name: ${d.get("name")}\n` +
+    `Phone: ${d.get("phone")}\n` +
+    `Event: ${d.get("eventType")}\n` +
+    `Location: ${d.get("location")}\n` +
+    `Guests: ${d.get("guests")}\n` +
+    `Date: ${d.get("date")}\n` +
+    `Menu Wanted: ${menus}\n` +
+    `Extras: ${d.get("extra") || "None"}\n\n` +
+    `Please send me a quote.`;
+    
+    openWhatsApp(msg);
+    closeModal("catering-modal");
+}
 
     // ==================== 9. INIT - Runs when page loads ====================
     document.addEventListener("DOMContentLoaded", () => {
